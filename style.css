@@ -1,0 +1,956 @@
+:root {
+    color-scheme: dark;
+    --page-bg: #111615;
+    --panel-bg: #1a211f;
+    --control-bg: #202825;
+    --field-bg: #151b19;
+    --line: #3b4742;
+    --text: #f1f4f2;
+    --muted: #b0bbb5;
+    --subtle: #87948d;
+    --keyboard-accent: #e8ad62;
+    --sound-accent: #7fd0bd;
+    --radius-large: 18px;
+    --radius-medium: 12px;
+}
+
+html {
+    min-width: 320px;
+    background: var(--page-bg);
+    scroll-behavior: smooth;
+}
+
+body {
+    min-height: 100vh;
+    background: var(--page-bg);
+    color: var(--text);
+    font-family: Arial, Helvetica, sans-serif;
+    line-height: 1.45;
+}
+
+button,
+input {
+    accent-color: var(--sound-accent);
+}
+
+button {
+    -webkit-tap-highlight-color: transparent;
+}
+
+button:focus-visible,
+input:focus-visible,
+[tabindex]:focus-visible {
+    outline-color: #ffffff;
+}
+
+.appShell {
+    width: min(calc(100% - 40px), 1520px);
+    margin-inline: auto;
+    padding-block: clamp(20px, 3vh, 36px) 18px;
+}
+
+.pageHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    margin-bottom: clamp(20px, 3vh, 34px);
+}
+
+.pageHeading {
+    min-width: 0;
+}
+
+.eyebrow,
+.playerKicker,
+.sectionEyebrow,
+.readoutLabel {
+    margin: 0;
+    color: var(--muted);
+    font-size: 0.69rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    line-height: 1.3;
+}
+
+.pageHeader h1 {
+    margin: 7px 0 0;
+    font-size: clamp(2rem, 4.2vw, 4.2rem);
+    font-weight: 650;
+    letter-spacing: -0.055em;
+    line-height: 0.98;
+}
+
+.pageTagline {
+    margin: 11px 0 0;
+    color: var(--muted);
+    font-size: 0.74rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+}
+
+.pageTagline span {
+    padding-inline: 0.45rem;
+    color: var(--sound-accent);
+}
+
+.infoButton {
+    display: inline-grid;
+    flex: 0 0 auto;
+    width: 42px;
+    height: 42px;
+    place-items: center;
+    border: 1px solid var(--line);
+    border-radius: 50%;
+    background: var(--panel-bg);
+    color: var(--text);
+    font-size: 1.1rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: border-color 160ms ease, background 160ms ease;
+}
+
+.infoButton:hover {
+    border-color: var(--sound-accent);
+    background: var(--control-bg);
+}
+
+.playerWorkspace {
+    display: grid;
+    grid-template-columns: minmax(0, 1.06fr) minmax(0, 0.94fr);
+    align-items: stretch;
+    gap: clamp(14px, 1.6vw, 24px);
+}
+
+.playerZone {
+    --role-accent: var(--sound-accent);
+    display: flex;
+    min-width: 0;
+    flex-direction: column;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-large);
+    background: var(--panel-bg);
+    padding: clamp(16px, 1.7vw, 26px);
+}
+
+.keyboardZone {
+    --role-accent: var(--keyboard-accent);
+}
+
+.soundZone {
+    --role-accent: var(--sound-accent);
+}
+
+.playerZoneHeader {
+    display: flex;
+    min-width: 0;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--line);
+}
+
+.playerIdentity {
+    display: flex;
+    min-width: 0;
+    align-items: center;
+    gap: 12px;
+}
+
+.playerIndex {
+    display: grid;
+    flex: 0 0 auto;
+    width: 46px;
+    height: 46px;
+    place-items: center;
+    border-radius: 12px;
+    background: var(--role-accent);
+    color: #14201b;
+    font-size: 1rem;
+    font-weight: 800;
+    letter-spacing: -0.04em;
+}
+
+.playerKicker {
+    color: var(--role-accent);
+    font-size: 0.65rem;
+}
+
+.playerZoneHeader h2 {
+    margin: 2px 0 0;
+    font-size: clamp(1.2rem, 1.8vw, 1.65rem);
+    font-weight: 650;
+    letter-spacing: -0.035em;
+    line-height: 1.15;
+}
+
+.roleTag {
+    flex: 0 0 auto;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    padding: 6px 9px;
+    color: var(--muted);
+    font-size: 0.61rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    white-space: nowrap;
+}
+
+.zoneBody {
+    display: flex;
+    min-height: 0;
+    flex: 1;
+    flex-direction: column;
+    gap: 16px;
+    padding-top: 18px;
+}
+
+.keyboardBody {
+    justify-content: flex-start;
+}
+
+.keyboardIntro {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.sectionEyebrow {
+    color: var(--subtle);
+    font-size: 0.63rem;
+}
+
+.minimalHint {
+    margin: 0;
+    color: var(--muted);
+    font-size: 0.76rem;
+}
+
+.keyboardLegend {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px 18px;
+    color: var(--muted);
+    font-size: 0.7rem;
+    letter-spacing: 0.04em;
+}
+
+.keyboardLegend span {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+}
+
+.legendWhiteKey,
+.legendBlackKey {
+    display: inline-block;
+    width: 10px;
+    height: 13px;
+    border-radius: 2px;
+}
+
+.legendWhiteKey {
+    border: 1px solid #ddd;
+    background: #f3f1eb;
+}
+
+.legendBlackKey {
+    height: 11px;
+    border: 1px solid #000;
+    background: #303a36;
+}
+
+.zoneFooterNote {
+    margin: auto 0 0;
+    padding-top: 12px;
+    border-top: 1px solid var(--line);
+    color: var(--muted);
+    font-size: 0.78rem;
+}
+
+.soundBody {
+    gap: 15px;
+}
+
+.spatialPanel {
+    display: flex;
+    min-width: 0;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.spatialPanelHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+.spatialPanelHeader h3,
+.controlCardHeader h3 {
+    margin: 0;
+    font-size: 0.93rem;
+    font-weight: 700;
+}
+
+.liveIndicator {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--sound-accent);
+    font-size: 0.61rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+}
+
+.liveIndicator span {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--sound-accent);
+    box-shadow: 0 0 0 3px rgba(127, 208, 189, 0.12);
+}
+
+.spatialField {
+    position: relative;
+    width: 100%;
+    height: clamp(250px, 24vw, 365px);
+    min-height: 230px;
+    overflow: hidden;
+    border: 1px solid #42554d;
+    border-radius: var(--radius-medium);
+    background:
+        radial-gradient(ellipse at 78% 20%, rgba(127, 208, 189, 0.15), transparent 42%),
+        radial-gradient(ellipse at 10% 88%, rgba(232, 173, 98, 0.09), transparent 42%),
+        #151b19;
+    touch-action: none;
+    cursor: crosshair;
+    isolation: isolate;
+}
+
+.spatialField::before,
+.spatialField::after {
+    position: absolute;
+    z-index: 0;
+    background: rgba(219, 235, 227, 0.12);
+    content: "";
+    pointer-events: none;
+}
+
+.spatialField::before {
+    top: 0;
+    bottom: 0;
+    left: 50%;
+    width: 1px;
+}
+
+.spatialField::after {
+    top: 50%;
+    right: 0;
+    left: 0;
+    height: 1px;
+}
+
+.axisLine {
+    position: absolute;
+    z-index: 0;
+    background: rgba(219, 235, 227, 0.055);
+    pointer-events: none;
+}
+
+.axisVertical {
+    top: 0;
+    bottom: 0;
+    left: 25%;
+    width: 1px;
+}
+
+.axisHorizontal {
+    top: 25%;
+    right: 0;
+    left: 0;
+    height: 1px;
+}
+
+.axisLabel {
+    position: absolute;
+    z-index: 1;
+    max-width: 43%;
+    color: #c0cbc5;
+    font-size: clamp(0.53rem, 0.63vw, 0.66rem);
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    line-height: 1.2;
+    pointer-events: none;
+}
+
+.axisTopLeft {
+    top: 12px;
+    left: 12px;
+}
+
+.axisTopRight {
+    top: 12px;
+    right: 12px;
+    color: var(--sound-accent);
+    text-align: right;
+}
+
+.axisBottomLeft {
+    bottom: 12px;
+    left: 12px;
+}
+
+.axisBottomRight {
+    right: 12px;
+    bottom: 12px;
+    text-align: right;
+}
+
+.spatialBall {
+    position: absolute;
+    z-index: 2;
+    top: 44%;
+    left: 54%;
+    width: clamp(34px, 3.5vw, 49px);
+    height: clamp(34px, 3.5vw, 49px);
+    transform: translate(-50%, -50%);
+    border: 2px solid #e5fff6;
+    border-radius: 50%;
+    background: var(--sound-accent);
+    box-shadow: 0 0 0 7px rgba(127, 208, 189, 0.1), 0 0 28px rgba(127, 208, 189, 0.32);
+    cursor: grab;
+    touch-action: none;
+    transition: box-shadow 120ms ease;
+}
+
+.spatialBall::after {
+    position: absolute;
+    inset: 33%;
+    border-radius: 50%;
+    background: #18332b;
+    content: "";
+}
+
+.spatialBall:active,
+.spatialBall.isDragging {
+    cursor: grabbing;
+    box-shadow: 0 0 0 10px rgba(127, 208, 189, 0.15), 0 0 36px rgba(127, 208, 189, 0.45);
+}
+
+.spatialReadout {
+    display: flex;
+    min-width: 0;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.readoutMain {
+    display: flex;
+    min-width: 0;
+    flex-direction: column;
+    gap: 3px;
+}
+
+.readoutLabel {
+    color: var(--subtle);
+    font-size: 0.59rem;
+}
+
+#position-feedback {
+    color: var(--sound-accent);
+    font-size: 0.92rem;
+    font-weight: 700;
+}
+
+.readoutValues {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: 5px 10px;
+    color: var(--muted);
+    font-size: 0.61rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-align: right;
+}
+
+.readoutValues output {
+    color: var(--text);
+    font-weight: 600;
+    letter-spacing: 0;
+}
+
+.soundControlGrid {
+    display: grid;
+    grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+    gap: 12px;
+    margin-top: auto;
+}
+
+.controlCard {
+    min-width: 0;
+    margin: 0;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-medium);
+    background: var(--control-bg);
+    padding: 13px;
+}
+
+.controlCardHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    margin-bottom: 17px;
+}
+
+.controlCardHeader output {
+    color: var(--sound-accent);
+    font-size: 0.76rem;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+#volume-slider {
+    display: block;
+    width: 100%;
+    min-width: 0;
+    margin: 0;
+    cursor: pointer;
+}
+
+.rangeLabels {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 7px;
+    color: var(--muted);
+    font-size: 0.55rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+}
+
+.waveformCard {
+    padding-top: 10px;
+}
+
+.waveformCard legend {
+    padding: 0;
+    color: var(--text);
+    font-size: 0.93rem;
+    font-weight: 700;
+}
+
+.waveformGrid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 6px;
+    margin-top: 7px;
+}
+
+.waveformGrid label {
+    position: relative;
+    display: block;
+    min-width: 0;
+    cursor: pointer;
+}
+
+.waveformGrid input {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    opacity: 0;
+}
+
+.waveformGrid span {
+    display: flex;
+    min-height: 32px;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid #46534d;
+    border-radius: 7px;
+    background: #19211e;
+    color: var(--muted);
+    font-size: 0.7rem;
+    text-align: center;
+    transition: border-color 140ms ease, background 140ms ease, color 140ms ease;
+}
+
+.waveformGrid input:checked + span {
+    border-color: var(--sound-accent);
+    background: rgba(127, 208, 189, 0.13);
+    color: #e8fff7;
+}
+
+.waveformGrid input:focus-visible + span {
+    outline: 2px solid #ffffff;
+    outline-offset: 2px;
+}
+
+.waveformFeedback {
+    display: block;
+    margin-top: 7px;
+    color: var(--muted);
+    font-size: 0.62rem;
+}
+
+.pageFooter {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    padding-top: 16px;
+    color: var(--subtle);
+    font-size: 0.62rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+}
+
+.dialogPanel {
+    width: min(calc(100% - 32px), 440px);
+    border: 1px solid #4b5a53;
+    border-radius: 16px;
+    background: #1a211f;
+    color: var(--text);
+    padding: 26px;
+}
+
+.dialogPanel::backdrop {
+    background: rgba(5, 10, 8, 0.78);
+    backdrop-filter: blur(5px);
+}
+
+.dialogPanel h2 {
+    margin: 7px 0 0;
+    font-size: clamp(1.5rem, 5vw, 2rem);
+    letter-spacing: -0.04em;
+    line-height: 1.1;
+}
+
+.dialogText {
+    margin: 14px 0 20px;
+    color: #c3cdc7;
+    font-size: 0.9rem;
+    line-height: 1.6;
+}
+
+.primaryButton,
+.secondaryButton {
+    min-height: 42px;
+    border: 1px solid var(--sound-accent);
+    border-radius: 9px;
+    background: var(--sound-accent);
+    color: #13251f;
+    padding: 9px 15px;
+    font-size: 0.83rem;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.secondaryButton {
+    border-color: var(--line);
+    background: var(--control-bg);
+    color: var(--text);
+}
+
+.visuallyHidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    clip-path: inset(50%);
+}
+
+@media (min-width: 1601px) {
+    .appShell {
+        width: min(calc(100% - 64px), 1760px);
+        padding-top: 38px;
+    }
+
+    .playerWorkspace {
+        grid-template-columns: minmax(0, 1.08fr) minmax(0, 0.92fr);
+        gap: 26px;
+    }
+
+    .playerZone {
+        padding: 28px;
+    }
+
+    .spatialField {
+        height: 390px;
+    }
+
+    .keyboardContainer {
+        height: 420px;
+    }
+}
+
+@media (min-width: 1200px) and (max-width: 1600px) {
+    .playerWorkspace {
+        grid-template-columns: minmax(0, 1.04fr) minmax(0, 0.96fr);
+    }
+
+    .spatialField {
+        height: clamp(300px, 24vw, 370px);
+    }
+
+    .keyboardContainer {
+        height: clamp(320px, 29vw, 430px);
+    }
+}
+
+@media (min-width: 840px) and (max-width: 1199px) {
+    .appShell {
+        width: min(calc(100% - 28px), 1140px);
+        padding-top: 22px;
+    }
+
+    .playerWorkspace {
+        grid-template-columns: minmax(0, 1.02fr) minmax(0, 0.98fr);
+        gap: 12px;
+    }
+
+    .playerZone {
+        padding: 14px;
+    }
+
+    .playerZoneHeader {
+        align-items: flex-start;
+        gap: 8px;
+    }
+
+    .playerIdentity {
+        gap: 9px;
+    }
+
+    .playerIndex {
+        width: 38px;
+        height: 38px;
+    }
+
+    .roleTag {
+        max-width: 115px;
+        padding: 5px 7px;
+        font-size: 0.53rem;
+        white-space: normal;
+        text-align: center;
+    }
+
+    .keyboardContainer {
+        height: clamp(280px, 34vw, 365px);
+    }
+
+    .spatialField {
+        height: clamp(245px, 27vw, 320px);
+        min-height: 230px;
+    }
+
+    .soundControlGrid {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .controlCard {
+        padding: 11px;
+    }
+
+    .controlCardHeader {
+        margin-bottom: 12px;
+    }
+}
+
+@media (max-width: 839px) {
+    .appShell {
+        width: min(calc(100% - 28px), 720px);
+        padding-top: 20px;
+    }
+
+    .pageHeader {
+        margin-bottom: 18px;
+    }
+
+    .pageHeader h1 {
+        font-size: clamp(2rem, 6.5vw, 3.2rem);
+    }
+
+    .playerWorkspace {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 14px;
+    }
+
+    .playerZone {
+        padding: clamp(14px, 3vw, 22px);
+    }
+
+    .keyboardContainer {
+        height: clamp(220px, 33vw, 320px);
+    }
+
+    .spatialField {
+        height: clamp(250px, 48vw, 360px);
+    }
+
+    .soundControlGrid {
+        grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+    }
+
+    .pageFooter {
+        padding-top: 18px;
+    }
+}
+
+@media (max-width: 479px) {
+    .appShell {
+        width: calc(100% - 20px);
+        padding-top: 16px;
+    }
+
+    .pageHeader {
+        gap: 10px;
+    }
+
+    .pageHeader h1 {
+        font-size: clamp(1.85rem, 8vw, 2.5rem);
+    }
+
+    .eyebrow {
+        font-size: 0.59rem;
+    }
+
+    .pageTagline {
+        font-size: 0.63rem;
+    }
+
+    .infoButton {
+        width: 36px;
+        height: 36px;
+    }
+
+    .playerZone {
+        border-radius: 14px;
+        padding: 12px;
+    }
+
+    .playerZoneHeader {
+        align-items: center;
+        padding-bottom: 12px;
+    }
+
+    .playerIdentity {
+        gap: 9px;
+    }
+
+    .playerIndex {
+        width: 36px;
+        height: 36px;
+        border-radius: 10px;
+        font-size: 0.86rem;
+    }
+
+    .playerZoneHeader h2 {
+        font-size: 1.1rem;
+    }
+
+    .playerKicker {
+        font-size: 0.58rem;
+    }
+
+    .roleTag {
+        max-width: 100px;
+        font-size: 0.48rem;
+        white-space: normal;
+    }
+
+    .zoneBody {
+        gap: 12px;
+        padding-top: 13px;
+    }
+
+    .keyboardContainer {
+        height: 225px;
+        padding: 5px;
+    }
+
+    .keyboardLegend {
+        gap: 8px 12px;
+        font-size: 0.64rem;
+    }
+
+    .minimalHint {
+        font-size: 0.68rem;
+    }
+
+    .spatialField {
+        height: 255px;
+        min-height: 230px;
+    }
+
+    .axisLabel {
+        font-size: 0.5rem;
+        letter-spacing: 0.04em;
+    }
+
+    .axisTopLeft,
+    .axisTopRight {
+        top: 9px;
+    }
+
+    .axisTopLeft,
+    .axisBottomLeft {
+        left: 9px;
+    }
+
+    .axisTopRight,
+    .axisBottomRight {
+        right: 9px;
+    }
+
+    .axisBottomLeft,
+    .axisBottomRight {
+        bottom: 9px;
+    }
+
+    .spatialReadout {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .readoutValues {
+        justify-content: flex-start;
+        text-align: left;
+    }
+
+    .soundControlGrid {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .controlCard {
+        padding: 12px;
+    }
+
+    .controlCardHeader {
+        margin-bottom: 13px;
+    }
+
+    .pageFooter {
+        flex-direction: column;
+        gap: 5px;
+        font-size: 0.56rem;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        scroll-behavior: auto !important;
+        transition-duration: 0.01ms !important;
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+    }
+}

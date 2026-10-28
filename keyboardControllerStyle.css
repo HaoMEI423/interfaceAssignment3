@@ -1,0 +1,197 @@
+.keyboardContainer {
+    --white-key-count: 8;
+    --black-key-width: 8%;
+    position: relative;
+    width: 100%;
+    height: clamp(300px, 29vw, 430px);
+    min-width: 0;
+    min-height: 0;
+    overflow: hidden;
+    border: 1px solid #4a5b52;
+    border-radius: 10px;
+    background: #111714;
+    padding: 7px;
+    isolation: isolate;
+}
+
+.whiteKeyRow {
+    position: absolute;
+    inset: 7px;
+    display: grid;
+    grid-template-columns: repeat(var(--white-key-count), minmax(0, 1fr));
+    overflow: hidden;
+    border: 1px solid #b8bcb7;
+    border-radius: 3px 3px 5px 5px;
+    background: #f1f0e9;
+}
+
+.whiteKey {
+    position: relative;
+    display: flex;
+    min-width: 0;
+    align-items: flex-end;
+    justify-content: center;
+    border: 0;
+    border-right: 1px solid #a8aca6;
+    border-radius: 0;
+    background: #f1f0e9;
+    color: #26312c;
+    padding: 0 2px 13px;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: none;
+    transition: background 90ms ease, box-shadow 90ms ease;
+}
+
+.whiteKey:last-child {
+    border-right: 0;
+}
+
+.whiteKey:hover {
+    background: #dedfd8;
+}
+
+.whiteKey.activeKey {
+    background: #e8ad62 !important;
+    box-shadow: inset 0 -9px 0 rgba(31, 36, 32, 0.12);
+}
+
+.keyComputerLabel {
+    font-size: clamp(0.78rem, 1.05vw, 1.05rem);
+    font-weight: 700;
+    line-height: 1;
+    opacity: 0.86;
+}
+
+.blackKeyLayer {
+    position: absolute;
+    z-index: 3;
+    inset: 7px;
+    pointer-events: none;
+}
+
+.blackKey {
+    position: absolute;
+    top: 0;
+    display: flex;
+    width: var(--black-key-width);
+    height: 59%;
+    align-items: flex-end;
+    justify-content: center;
+    border: 1px solid #050807;
+    border-radius: 0 0 4px 4px;
+    background: linear-gradient(180deg, #202825 0%, #111613 100%);
+    color: #9ba8a0;
+    padding: 0 1px 8px;
+    cursor: pointer;
+    pointer-events: auto;
+    touch-action: none;
+    box-shadow: 0 3px 4px rgba(0, 0, 0, 0.28);
+    transition: background 90ms ease, color 90ms ease;
+}
+
+.blackKey:hover {
+    background: #35413b;
+    color: #d6e1da;
+}
+
+.blackKey.activeKey {
+    border-color: #1b3e34;
+    background: #70c6b2 !important;
+    color: #16342c;
+}
+
+.blackKeyLabel {
+    font-size: clamp(0.48rem, 0.58vw, 0.62rem);
+    font-weight: 600;
+    line-height: 1;
+    opacity: 0.72;
+}
+
+/* Black keys sit between C-D, D-E, F-G, G-A and A-B. */
+.blackKey:nth-child(1) {
+    left: 8.5%;
+}
+
+.blackKey:nth-child(2) {
+    left: 21%;
+}
+
+.blackKey:nth-child(3) {
+    left: 46%;
+}
+
+.blackKey:nth-child(4) {
+    left: 58.5%;
+}
+
+.blackKey:nth-child(5) {
+    left: 71%;
+}
+
+@media (min-width: 1601px) {
+    .keyboardContainer {
+        height: 420px;
+    }
+}
+
+@media (min-width: 1200px) and (max-width: 1600px) {
+    .keyboardContainer {
+        height: clamp(320px, 29vw, 430px);
+    }
+}
+
+@media (min-width: 840px) and (max-width: 1199px) {
+    .keyboardContainer {
+        height: clamp(280px, 34vw, 365px);
+        padding: 5px;
+    }
+
+    .whiteKeyRow,
+    .blackKeyLayer {
+        inset: 5px;
+    }
+
+    .whiteKey {
+        padding-bottom: 10px;
+    }
+
+    .blackKey {
+        padding-bottom: 6px;
+    }
+}
+
+@media (max-width: 839px) {
+    .keyboardContainer {
+        height: clamp(220px, 33vw, 320px);
+    }
+}
+
+@media (max-width: 479px) {
+    .keyboardContainer {
+        height: 225px;
+        padding: 5px;
+    }
+
+    .whiteKeyRow,
+    .blackKeyLayer {
+        inset: 5px;
+    }
+
+    .whiteKey {
+        padding-bottom: 10px;
+    }
+
+    .blackKey {
+        height: 57%;
+        padding-bottom: 6px;
+    }
+
+    .keyComputerLabel {
+        font-size: 0.72rem;
+    }
+
+    .blackKeyLabel {
+        font-size: 0.46rem;
+    }
+}

@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#111615">
+    <title>Cooperative Synthesizer — Shared Sound Space</title>
+    <link rel="stylesheet" href="reset.css">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="keyboardControllerStyle.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/15.3.5/Tone.js" defer></script>
+    <script src="main.js" defer></script>
+    <script src="keyboardController.js" defer></script>
+</head>
+<body>
+    <dialog id="intro-dialog" class="dialogPanel" aria-labelledby="intro-title">
+        <p class="eyebrow">COOPERATIVE SYNTHESIZER</p>
+        <h2 id="intro-title">Shared Sound Space</h2>
+        <p class="dialogText">One player plays the notes. The other shapes the shared sound.</p>
+        <button id="intro-dialog-close-button" class="primaryButton" type="button">Start instrument</button>
+    </dialog>
+
+    <main class="appShell">
+        <header class="pageHeader">
+            <div class="pageHeading">
+                <p class="eyebrow">A COLLABORATIVE AUDIO INSTRUMENT</p>
+                <h1>Shared Sound Space</h1>
+                <p class="pageTagline">ONE INSTRUMENT <span aria-hidden="true">/</span> TWO PLAYERS</p>
+            </div>
+            <button id="info-button" class="infoButton" type="button" aria-label="About this instrument" aria-haspopup="dialog">i</button>
+        </header>
+
+        <section class="playerWorkspace" aria-label="Two-player synthesizer controls">
+            <section class="playerZone keyboardZone" aria-labelledby="keyboard-player-title">
+                <header class="playerZoneHeader">
+                    <div class="playerIdentity">
+                        <span class="playerIndex" aria-hidden="true">02</span>
+                        <div>
+                            <p class="playerKicker">PLAYER 02</p>
+                            <h2 id="keyboard-player-title">Play notes</h2>
+                        </div>
+                    </div>
+                    <span class="roleTag">KEYBOARD</span>
+                </header>
+
+                <div class="zoneBody keyboardBody">
+                    <div class="keyboardIntro">
+                        <p class="sectionEyebrow">NOTE INPUT</p>
+                        <p class="minimalHint">Click or hold a key</p>
+                    </div>
+
+                    <div id="keyboard" class="keyboardContainer" role="group" aria-label="One octave piano keyboard. White keys use A S D F G H J K. Black keys use W E T Y U.">
+                        <div class="whiteKeyRow">
+                            <button class="whiteKey" type="button" data-note="C4" data-pc-key="a" aria-label="C4, computer key A"><span class="keyComputerLabel">A</span></button>
+                            <button class="whiteKey" type="button" data-note="D4" data-pc-key="s" aria-label="D4, computer key S"><span class="keyComputerLabel">S</span></button>
+                            <button class="whiteKey" type="button" data-note="E4" data-pc-key="d" aria-label="E4, computer key D"><span class="keyComputerLabel">D</span></button>
+                            <button class="whiteKey" type="button" data-note="F4" data-pc-key="f" aria-label="F4, computer key F"><span class="keyComputerLabel">F</span></button>
+                            <button class="whiteKey" type="button" data-note="G4" data-pc-key="g" aria-label="G4, computer key G"><span class="keyComputerLabel">G</span></button>
+                            <button class="whiteKey" type="button" data-note="A4" data-pc-key="h" aria-label="A4, computer key H"><span class="keyComputerLabel">H</span></button>
+                            <button class="whiteKey" type="button" data-note="B4" data-pc-key="j" aria-label="B4, computer key J"><span class="keyComputerLabel">J</span></button>
+                            <button class="whiteKey" type="button" data-note="C5" data-pc-key="k" aria-label="C5, computer key K"><span class="keyComputerLabel">K</span></button>
+                        </div>
+
+                        <div class="blackKeyLayer" aria-label="Black keys">
+                            <button class="blackKey" type="button" data-note="C#4" data-pc-key="w" aria-label="C sharp 4, computer key W"><span class="blackKeyLabel">W</span></button>
+                            <button class="blackKey" type="button" data-note="D#4" data-pc-key="e" aria-label="D sharp 4, computer key E"><span class="blackKeyLabel">E</span></button>
+                            <button class="blackKey" type="button" data-note="F#4" data-pc-key="t" aria-label="F sharp 4, computer key T"><span class="blackKeyLabel">T</span></button>
+                            <button class="blackKey" type="button" data-note="G#4" data-pc-key="y" aria-label="G sharp 4, computer key Y"><span class="blackKeyLabel">Y</span></button>
+                            <button class="blackKey" type="button" data-note="A#4" data-pc-key="u" aria-label="A sharp 4, computer key U"><span class="blackKeyLabel">U</span></button>
+                        </div>
+                    </div>
+
+                    <p class="zoneFooterNote">Your notes become the shared sound.</p>
+                </div>
+            </section>
+
+            <section class="playerZone soundZone" aria-labelledby="sound-player-title">
+                <header class="playerZoneHeader">
+                    <div class="playerIdentity">
+                        <span class="playerIndex" aria-hidden="true">01</span>
+                        <div>
+                            <p class="playerKicker">PLAYER 01</p>
+                            <h2 id="sound-player-title">Shape sound</h2>
+                        </div>
+                    </div>
+                    <span class="roleTag">SOUND CONTROLS</span>
+                </header>
+
+                <div class="zoneBody soundBody">
+                    <section class="spatialPanel" aria-labelledby="spatial-title">
+                        <div class="spatialPanelHeader">
+                            <h3 id="spatial-title">Spatial input</h3>
+                            <span class="liveIndicator"><span aria-hidden="true"></span> LIVE</span>
+                        </div>
+
+                        <div id="spatial-field" class="spatialField" role="group" aria-label="Spatial sound modifier. Move horizontally to change brightness and vertically to change resonance.">
+                            <span class="axisLabel axisTopLeft">MORE RESONANCE</span>
+                            <span class="axisLabel axisTopRight">BRIGHT</span>
+                            <span class="axisLabel axisBottomLeft">DARK / SMOOTH</span>
+                            <span class="axisLabel axisBottomRight">LESS RESONANCE</span>
+                            <span class="axisLine axisVertical" aria-hidden="true"></span>
+                            <span class="axisLine axisHorizontal" aria-hidden="true"></span>
+                            <div id="spatialBall" class="spatialBall" tabindex="0" role="group" aria-label="Spatial control point. Use arrow keys when focused."></div>
+                        </div>
+
+                        <div class="spatialReadout" aria-live="polite">
+                            <div class="readoutMain">
+                                <span class="readoutLabel">CURRENT SOUND</span>
+                                <output id="position-feedback">Balanced</output>
+                            </div>
+                            <div class="readoutValues">
+                                <span>FILTER <output id="brightness-feedback">3.5 kHz</output></span>
+                                <span>RESONANCE <output id="resonance-feedback">1.0</output></span>
+                            </div>
+                        </div>
+                    </section>
+
+                    <div class="soundControlGrid">
+                        <section class="controlCard volumeCard" aria-labelledby="volume-title">
+                            <div class="controlCardHeader">
+                                <h3 id="volume-title">Volume</h3>
+                                <output id="volume-feedback" for="volume-slider">-8 dB</output>
+                            </div>
+                            <label class="visuallyHidden" for="volume-slider">Master volume</label>
+                            <input id="volume-slider" type="range" min="-32" max="0" value="-8" step="1">
+                            <div class="rangeLabels" aria-hidden="true"><span>QUIET</span><span>LOUD</span></div>
+                        </section>
+
+                        <fieldset class="controlCard waveformCard">
+                            <legend>Waveform</legend>
+                            <div class="waveformGrid">
+                                <label><input type="radio" class="waveformSelect" name="waveform" value="sine" checked><span>Sine</span></label>
+                                <label><input type="radio" class="waveformSelect" name="waveform" value="square"><span>Square</span></label>
+                                <label><input type="radio" class="waveformSelect" name="waveform" value="triangle"><span>Triangle</span></label>
+                                <label><input type="radio" class="waveformSelect" name="waveform" value="sawtooth"><span>Saw</span></label>
+                            </div>
+                            <output id="waveform-feedback" class="waveformFeedback">Sine</output>
+                        </fieldset>
+                    </div>
+                </div>
+            </section>
+        </section>
+
+        <footer class="pageFooter">
+            <span>COOPERATIVE SYNTHESIZER</span>
+            <span>ONE INSTRUMENT <span aria-hidden="true">·</span> TWO PLAYERS</span>
+        </footer>
+    </main>
+
+    <dialog id="info-dialog" class="dialogPanel" aria-labelledby="info-title">
+        <p class="eyebrow">HOW IT WORKS</p>
+        <h2 id="info-title">One instrument, two roles</h2>
+        <p class="dialogText">Player 02 selects notes with the piano-style keyboard. Player 01 shapes those notes with spatial input, waveform and volume controls. Move the spatial point left or right to change brightness, and up or down to change resonance.</p>
+        <button id="info-dialog-close-button" class="secondaryButton" type="button">Close</button>
+    </dialog>
+</body>
+</html>
