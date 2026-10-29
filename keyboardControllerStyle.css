@@ -1,3 +1,5 @@
+/* I keep the keyboard as one clear, full-width panel. The eight white keys are the main targets, while the black keys sit on top in a smaller layer like a piano. */
+
 .keyboardContainer {
     --white-key-count: 8;
     --black-key-width: 8%;
@@ -14,6 +16,8 @@
     isolation: isolate;
 }
 
+/* Grid gives all eight white keys equal widths, so the octave stays balanced when the panel changes size. */
+
 .whiteKeyRow {
     position: absolute;
     inset: 7px;
@@ -24,6 +28,8 @@
     border-radius: 3px 3px 5px 5px;
     background: #f1f0e9;
 }
+
+/* White keys use most of the visual space and have a large click area. Their labels sit near the bottom so the piano shape stays easy to read. */
 
 .whiteKey {
     position: relative;
@@ -47,14 +53,20 @@
     border-right: 0;
 }
 
+/* A small hover change lets users see which key they are about to play. */
+
 .whiteKey:hover {
     background: #dedfd8;
 }
+
+/* The amber active state matches Player 02’s role colour and gives immediate feedback while a note is held. */
 
 .whiteKey.activeKey {
     background: #e8ad62 !important;
     box-shadow: inset 0 -9px 0 rgba(31, 36, 32, 0.12);
 }
+
+/* White-key letters are readable because they are the main computer-key mapping users need to learn. */
 
 .keyComputerLabel {
     font-size: clamp(0.78rem, 1.05vw, 1.05rem);
@@ -63,12 +75,17 @@
     opacity: 0.86;
 }
 
+/* This layer positions the black keys over the white keys without blocking clicks on the rest of the keyboard. */
+
 .blackKeyLayer {
     position: absolute;
     z-index: 3;
     inset: 7px;
     pointer-events: none;
 }
+
+/* Black keys are narrower and shorter than white keys to keep the piano-like proportions. 
+Their labels are deliberately quieter so they do not compete with the white-key labels. */
 
 .blackKey {
     position: absolute;
@@ -90,16 +107,22 @@
     transition: background 90ms ease, color 90ms ease;
 }
 
+/* The hover state gives black keys feedback without changing the overall dark appearance. */
+
 .blackKey:hover {
     background: #35413b;
     color: #d6e1da;
 }
+
+/* Mint marks a pressed black key, linking the feedback to the shared sound-control colour. */
 
 .blackKey.activeKey {
     border-color: #1b3e34;
     background: #70c6b2 !important;
     color: #16342c;
 }
+
+/* The black-key letters are smaller and softer because they are secondary to the main white-key row. */
 
 .blackKeyLabel {
     font-size: clamp(0.48rem, 0.58vw, 0.62rem);
@@ -129,17 +152,23 @@
     left: 71%;
 }
 
+/* Extra-large screens have more room, so I let the keyboard grow without changing the key layout. */
+
 @media (min-width: 1601px) {
     .keyboardContainer {
         height: 420px;
     }
 }
 
+/* On large screens, the keyboard scales with the viewport but stays within a practical height range. */
+
 @media (min-width: 1200px) and (max-width: 1600px) {
     .keyboardContainer {
         height: clamp(320px, 29vw, 430px);
     }
 }
+
+/* Expanded screens have less spare room, so I shorten the keyboard and tighten its inner padding while keeping all keys usable. */
 
 @media (min-width: 840px) and (max-width: 1199px) {
     .keyboardContainer {
@@ -161,11 +190,15 @@
     }
 }
 
+/* Below 840px the two player zones stack, so the keyboard needs a shorter height to avoid dominating the page. */
+
 @media (max-width: 839px) {
     .keyboardContainer {
         height: clamp(220px, 33vw, 320px);
     }
 }
+
+/* On very small screens, I make the keys and labels more compact while keeping the eight white keys visible together. */
 
 @media (max-width: 479px) {
     .keyboardContainer {
