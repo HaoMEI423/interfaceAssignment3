@@ -25,9 +25,16 @@ The keyboard remains the note source, while spatial input changes its tone inste
 
 const filter = new Tone.Filter(3500, "lowpass");
 filter.Q.value = 1;
-const masterVolume = new Tone.Volume(-8).toDestination();
+
+// Leave more headroom for overlapping notes.
+const masterVolume = new Tone.Volume(-14);
+
+// Catch excessive peaks before the audio reaches the output.
+const limiter = new Tone.Limiter(-3).toDestination();
+
 keyboardSynth.connect(filter);
 filter.connect(masterVolume);
+masterVolume.connect(limiter);
 
 /* These values store the ball’s position as percentages from 0 to 1, which makes the sound mapping work at any screen size. */
 
