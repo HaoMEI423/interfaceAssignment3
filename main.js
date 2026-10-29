@@ -55,7 +55,7 @@ compressor.connect(limiter);
 
 const spatialState = { x: 0.54, y: 0.44 };
 let spatialDragging = false;
-let audioStarted = false;
+let audioStartPromise = null;
 
 /* Keep the spatial values inside the pad, so the control point and sound parameters cannot move beyond their intended range. */
 
@@ -63,15 +63,36 @@ function clamp(value, min = 0, max = 1) {
     return Math.min(max, Math.max(min, value));
 }
 
-/* Browsers often wait for a user gesture before starting audio. I start Tone.js only when the user interacts, then avoid restarting it each time. */
+/* Chrome can suspend the audio context when a tab is inactive. I check the real context state each time instead of remembering only whether audio started once, so the next user action can resume audio if needed. */
 
 async function ensureAudio() {
-    if (audioStarted) {
+    const context = Tone.context;
+
+    // Do nothing when audio is already running normally.
+    if (context.state === "running") {
         return;
     }
 
-    await Tone.start();
-    audioStarted = true;
+    // A closed context cannot be resumed, so the page needs to be reloaded.
+    if (context.state === "closed") {
+        throw new Error("The audio context is closed. Reload the page to restart audio.");
+    }
+
+    // Share one resume request when several keys are pressed at almost the same time.
+    if (!audioStartPromise) {
+        audioStartPromise = Tone.start()
+            .then(() => {
+                if (Tone.context.state !== "running") {
+                    throw new Error(`Audio context did not resume. Current state: ${Tone.context.state}`);
+                }
+            })
+            .finally(() => {
+                // Clear the lock whether the resume succeeded or failed, so later input can retry.
+                audioStartPromise = null;
+            });
+    }
+
+    await audioStartPromise;
 }
 
 /* Map left-to-right movement to filter frequency. The mapping is exponential because frequency is heard more naturally across a wide range this way. */
