@@ -1,8 +1,12 @@
+/* I use border-box sizing so padding and borders are included in an element’s size. This makes the responsive layout easier to control. */
+
 *,
 *::before,
 *::after {
     box-sizing: border-box;
 }
+
+/* Remove browser-default spacing so the page starts from a clean, consistent layout. */
 
 html,
 body {
@@ -10,14 +14,20 @@ body {
     padding: 0;
 }
 
+/* Controls inherit the page font, so buttons and sliders feel like part of the same interface. */
+
 button,
 input {
     font: inherit;
 }
 
+/* Buttons use the surrounding text colour unless a component gives them a more specific style. */
+
 button {
     color: inherit;
 }
+
+/* Keep a clear focus outline for people navigating with a keyboard instead of a mouse. */
 
 button:focus-visible,
 input:focus-visible,
