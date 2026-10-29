@@ -6,7 +6,7 @@
  */
 
 /* Read the piano keys from the HTML. Their data attributes define both the note and its computer-key shortcut, so the mapping stays easy to edit. */
-s
+
 const pianoKeys = Array.from(document.querySelectorAll(".whiteKey, .blackKey"));
 const computerKeyMap = new Map(
     pianoKeys.map((key) => [key.dataset.pcKey, {
