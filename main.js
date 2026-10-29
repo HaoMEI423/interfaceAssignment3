@@ -1,3 +1,10 @@
+/*
+ * Cooperative Synthesizer — Shared Sound Space
+ * Player 02 selects notes; Player 01 shapes the same sound using spatial input.
+ */
+
+/* First, I cache the controls from the HTML so the functions below can update the same interface elements without repeatedly searching the page. */
+
 const spatialField = document.getElementById("spatial-field");
 const spatialBall = document.getElementById("spatialBall");
 const volumeSlider = document.getElementById("volume-slider");
@@ -11,6 +18,8 @@ const resonanceFeedback = document.getElementById("resonance-feedback");
 /* I use one polyphonic synth for the keyboard so several notes can overlap. This supports simple, shared playing without adding a complex music interface. */
 
 const keyboardSynth = new Tone.PolySynth(Tone.Synth, {
+    // Add some headroom before the filter, because several notes can overlap.
+    volume: -8,
     oscillator: { type: "sine" },
     envelope: {
         attack: 0.015,
@@ -20,21 +29,27 @@ const keyboardSynth = new Tone.PolySynth(Tone.Synth, {
     }
 });
 
-/* Player 01 shapes the keyboard’s sound through this shared filter. 
-The keyboard remains the note source, while spatial input changes its tone instead of creating a separate instrument. */
+/* Player 01 shapes the keyboard’s sound through this shared filter. I keep the filter resonance within a moderate range, because very high resonance can make chords sound sharp and overloaded. */
 
 const filter = new Tone.Filter(3500, "lowpass");
 filter.Q.value = 1;
 
-// Leave more headroom for overlapping notes.
-const masterVolume = new Tone.Volume(-14);
+/* The slider controls the master level. I send the signal through a compressor and then a limiter so overlapping notes are controlled before reaching the speakers. This keeps louder settings usable without relying on the slider alone to prevent clipping. */
 
-// Catch excessive peaks before the audio reaches the output.
-const limiter = new Tone.Limiter(-3).toDestination();
+const masterVolume = new Tone.Volume(-8);
+const compressor = new Tone.Compressor({
+    threshold: -16,
+    ratio: 4,
+    attack: 0.005,
+    release: 0.15,
+    knee: 6
+});
+const limiter = new Tone.Limiter(-2).toDestination();
 
 keyboardSynth.connect(filter);
 filter.connect(masterVolume);
-masterVolume.connect(limiter);
+masterVolume.connect(compressor);
+compressor.connect(limiter);
 
 /* These values store the ball’s position as percentages from 0 to 1, which makes the sound mapping work at any screen size. */
 
@@ -70,8 +85,8 @@ function getFilterFrequency(x) {
 /* Map up-and-down movement to resonance, giving the spatial pad a second sound dimension instead of making it control pitch again. */
 
 function getResonance(y) {
-    // Moving up increases resonance; moving down produces a smoother response.
-    return 0.5 + (1 - y) * 6.5;
+    // Moving up adds resonance, but the lower maximum keeps chords smoother.
+    return 0.5 + (1 - y) * 2;
 }
 
 /* Turn the current coordinates into simple words, so users can understand the sound state without reading technical values first. */
