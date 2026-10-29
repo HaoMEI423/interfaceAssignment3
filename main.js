@@ -1,10 +1,3 @@
-/*
- * Cooperative Synthesizer — Shared Sound Space
- * Player 02 selects notes; Player 01 shapes the same sound using spatial input.
- */
-
-/* First, I cache the controls from the HTML so the functions below can update the same interface elements without repeatedly searching the page. */
-
 const spatialField = document.getElementById("spatial-field");
 const spatialBall = document.getElementById("spatialBall");
 const volumeSlider = document.getElementById("volume-slider");
