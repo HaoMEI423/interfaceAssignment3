@@ -32,16 +32,25 @@ const harmonicExciter = new Tone.Distortion(0.12);
 harmonicExciter.oversample = "2x";
 
 /*
- * Player 01 shapes the keyboard's shared sound through this low-pass filter.
- * The cutoff range is tuned to the keyboard's C4-C5 notes. I keep the normal
- * -12 dB rolloff to avoid an overly aggressive peak, while the Q range below
- * makes the vertical resonance movement more noticeable.
+ * The main low-pass filter controls brightness on the horizontal axis.
+ * I keep its Q close to a normal Butterworth response, because the vertical
+ * axis uses a separate resonant layer below. This keeps the two controls
+ * easier to hear and understand independently.
  */
 const filter = new Tone.Filter(1400, "lowpass", -12);
-filter.Q.value = 2.8;
+filter.Q.value = 0.707;
 
-/* The slider controls the master level. I send the signal through a compressor and then a limiter so overlapping notes are controlled before reaching the speakers. This keeps louder settings usable without relying on the slider alone to prevent clipping. */
+/*
+ * The previous low-pass Q change was too subtle to hear across the whole pad.
+ * This band-pass filter creates a focused resonant layer around 550 Hz, close
+ * to the C4-C5 keyboard range. Player 01 controls how much of this layer is
+ * mixed into the shared sound with vertical movement.
+ */
+const resonanceFilter = new Tone.Filter(550, "bandpass");
+resonanceFilter.Q.value = 1.4;
+const resonanceGain = new Tone.Gain(0);
 
+/* The slider controls the master level. Both sound paths are mixed before the compressor and limiter so overlapping notes and resonance peaks are controlled together. */
 const masterVolume = new Tone.Volume(-8);
 const compressor = new Tone.Compressor({
     threshold: -16,
@@ -53,8 +62,16 @@ const compressor = new Tone.Compressor({
 const limiter = new Tone.Limiter(-2).toDestination();
 
 keyboardSynth.connect(harmonicExciter);
+
+// Main sound path: horizontal movement changes low-pass brightness.
 harmonicExciter.connect(filter);
 filter.connect(masterVolume);
+
+// Parallel sound path: vertical movement adds or reduces a resonant midrange band.
+harmonicExciter.connect(resonanceFilter);
+resonanceFilter.connect(resonanceGain);
+resonanceGain.connect(masterVolume);
+
 masterVolume.connect(compressor);
 compressor.connect(limiter);
 
@@ -115,12 +132,13 @@ function getFilterFrequency(x) {
 }
 
 /*
- * Map up-and-down movement to filter resonance. The 0.7-4.5 range gives
- * the vertical movement a clearer sound change while keeping the peak
- * controlled when several notes are played together.
+ * Map up-and-down movement to the amount of the resonant band mixed into
+ * the sound. The top adds more of this band and the bottom removes it.
+ * A 0-0.35 gain range makes the change clearly audible without overwhelming
+ * the keyboard notes.
  */
 function getResonance(y) {
-    return 0.7 + (1 - y) * 3.8;
+    return (1 - y) * 0.35;
 }
 
 /* Turn the current coordinates into simple words, so users can understand the sound state without reading technical values first. */
@@ -138,7 +156,7 @@ function updateSpatialSound() {
     const resonance = getResonance(spatialState.y);
 
     filter.frequency.rampTo(frequency, 0.09);
-    filter.Q.rampTo(resonance, 0.09);
+    resonanceGain.gain.rampTo(resonance, 0.09);
 
     spatialBall.style.left = `${spatialState.x * 100}%`;
     spatialBall.style.top = `${spatialState.y * 100}%`;
@@ -148,7 +166,7 @@ function updateSpatialSound() {
     brightnessFeedback.textContent = frequency >= 1000
         ? `${(frequency / 1000).toFixed(1)} kHz`
         : `${Math.round(frequency)} Hz`;
-    resonanceFeedback.textContent = resonance.toFixed(1);
+    resonanceFeedback.textContent = `${Math.round(resonance * 100)}%`;
 }
 
 /* Convert the pointer location into normalised coordinates inside the pad. Using 0–1 values keeps the mapping independent of the pad’s pixel size. */

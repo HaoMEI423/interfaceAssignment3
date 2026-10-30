@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="theme-color" content="#111615">
-    <title>Shared Sound Space</title>
+    <title>Cooperative Synthesizer — Shared Sound Space</title>
     <link rel="stylesheet" href="reset.css">
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="keyboardControllerStyle.css">
@@ -93,7 +93,7 @@
                             <span class="liveIndicator"><span aria-hidden="true"></span> LIVE</span>
                         </div>
 
-                        <div id="spatial-field" class="spatialField" role="group" aria-label="Spatial sound modifier. Move horizontally to change brightness and vertically to change resonance.">
+                        <div id="spatial-field" class="spatialField" role="group" aria-label="Spatial sound modifier. Move horizontally to change filter brightness and vertically to change filter resonance.">
                             <span class="axisLabel axisTopLeft">MORE RESONANCE</span>
                             <span class="axisLabel axisTopRight">BRIGHT</span>
                             <span class="axisLabel axisBottomLeft">DARK / SMOOTH</span>
@@ -109,8 +109,8 @@
                                 <output id="position-feedback">Balanced</output>
                             </div>
                             <div class="readoutValues">
-                                <span>FILTER <output id="brightness-feedback">3.5 kHz</output></span>
-                                <span>RESONANCE <output id="resonance-feedback">1.0</output></span>
+                                <span>FILTER <output id="brightness-feedback">1.4 kHz</output></span>
+                                <span>RESONANCE <output id="resonance-feedback">0%</output></span>
                             </div>
                         </div>
                     </section>
@@ -119,10 +119,10 @@
                         <section class="controlCard volumeCard" aria-labelledby="volume-title">
                             <div class="controlCardHeader">
                                 <h3 id="volume-title">Volume</h3>
-                                <output id="volume-feedback" for="volume-slider">-14 dB</output>
+                                <output id="volume-feedback" for="volume-slider">-8 dB</output>
                             </div>
                             <label class="visuallyHidden" for="volume-slider">Master volume</label>
-                            <input id="volume-slider" type="range" min="-32" max="0" value="-14" step="1">
+                            <input id="volume-slider" type="range" min="-32" max="0" value="-8" step="1">
                             <div class="rangeLabels" aria-hidden="true"><span>QUIET</span><span>LOUD</span></div>
                         </section>
 
