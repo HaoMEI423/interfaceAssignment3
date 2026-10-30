@@ -22,10 +22,23 @@ const keyboardSynth = new Tone.PolySynth(Tone.Synth, {
     }
 });
 
-/* Player 01 shapes the keyboard’s sound through this shared filter. I keep the filter resonance within a moderate range, because very high resonance can make chords sound sharp and overloaded. */
+/*
+ * A pure sine wave has almost no overtones, so a resonant filter has very
+ * little extra material to shape. This gentle exciter adds a small amount
+ * of harmonics before the filter, making both spatial axes audible even
+ * when Player 02 selects Sine. The amount stays low to avoid harshness.
+ */
+const harmonicExciter = new Tone.Distortion(0.12);
+harmonicExciter.oversample = "2x";
 
-const filter = new Tone.Filter(3500, "lowpass");
-filter.Q.value = 1;
+/*
+ * Player 01 shapes the keyboard's shared sound through this low-pass filter.
+ * The cutoff range is tuned to the keyboard's C4-C5 notes. I keep the normal
+ * -12 dB rolloff to avoid an overly aggressive peak, while the Q range below
+ * makes the vertical resonance movement more noticeable.
+ */
+const filter = new Tone.Filter(1400, "lowpass", -12);
+filter.Q.value = 2.8;
 
 /* The slider controls the master level. I send the signal through a compressor and then a limiter so overlapping notes are controlled before reaching the speakers. This keeps louder settings usable without relying on the slider alone to prevent clipping. */
 
@@ -39,7 +52,8 @@ const compressor = new Tone.Compressor({
 });
 const limiter = new Tone.Limiter(-2).toDestination();
 
-keyboardSynth.connect(filter);
+keyboardSynth.connect(harmonicExciter);
+harmonicExciter.connect(filter);
 filter.connect(masterVolume);
 masterVolume.connect(compressor);
 compressor.connect(limiter);
@@ -88,19 +102,25 @@ async function ensureAudio() {
     await audioStartPromise;
 }
 
-/* Map left-to-right movement to filter frequency. The mapping is exponential because frequency is heard more naturally across a wide range this way. */
-
+/*
+ * Map left-to-right movement to filter frequency. This range is closer to
+ * the C4-C5 keyboard notes and their added overtones, so moving left and
+ * right changes more of the sound instead of spending most of the range
+ * above the notes where the filter would have little effect.
+ */
 function getFilterFrequency(x) {
-    const minFrequency = 300;
-    const maxFrequency = 10000;
+    const minFrequency = 220;
+    const maxFrequency = 6500;
     return minFrequency * Math.pow(maxFrequency / minFrequency, x);
 }
 
-/* Map up-and-down movement to resonance, giving the spatial pad a second sound dimension instead of making it control pitch again. */
-
+/*
+ * Map up-and-down movement to filter resonance. The 0.7-4.5 range gives
+ * the vertical movement a clearer sound change while keeping the peak
+ * controlled when several notes are played together.
+ */
 function getResonance(y) {
-    // Moving up adds resonance, but the lower maximum keeps chords smoother.
-    return 0.5 + (1 - y) * 2;
+    return 0.7 + (1 - y) * 3.8;
 }
 
 /* Turn the current coordinates into simple words, so users can understand the sound state without reading technical values first. */
@@ -117,8 +137,8 @@ function updateSpatialSound() {
     const frequency = getFilterFrequency(spatialState.x);
     const resonance = getResonance(spatialState.y);
 
-    filter.frequency.rampTo(frequency, 0.07);
-    filter.Q.rampTo(resonance, 0.07);
+    filter.frequency.rampTo(frequency, 0.09);
+    filter.Q.rampTo(resonance, 0.09);
 
     spatialBall.style.left = `${spatialState.x * 100}%`;
     spatialBall.style.top = `${spatialState.y * 100}%`;
@@ -226,10 +246,15 @@ volumeSlider.addEventListener("input", (event) => {
     volumeFeedback.textContent = `${value} dB`;
 });
 
-/* Keep waveform changes in one function so the selected oscillator shape and the visible readout always stay in sync. */
-
+/*
+ * Keep waveform changes in one function so the selected oscillator shape
+ * and the visible readout stay in sync. The sine setting gets a little
+ * harmonic excitation because a pure sine has no overtones for the filter
+ * to shape; the other waveforms already contain harmonics, so they stay dry.
+ */
 function setWaveform(type) {
     keyboardSynth.set({ oscillator: { type } });
+    harmonicExciter.distortion = type === "sine" ? 0.12 : 0;
     waveformFeedback.textContent = type === "sawtooth"
         ? "Saw"
         : type.charAt(0).toUpperCase() + type.slice(1);
