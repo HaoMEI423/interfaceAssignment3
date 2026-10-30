@@ -256,12 +256,32 @@ spatialBall.addEventListener("keydown", (event) => {
     }
 });
 
-/* Volume changes smoothly as the slider moves, and the decibel readout shows the current setting immediately. */
+/*
+ * The interface shows volume as a percentage, which is easier to understand
+ * than decibels. Internally, I convert the percentage to dB because Tone.js
+ * controls audio gain in decibels. This keeps 40% close to the previous -8 dB
+ * starting level, while 0% is effectively silent.
+ */
+function volumePercentToDb(percent) {
+    const safePercent = clamp(Number(percent), 0, 100);
 
+    if (safePercent === 0) {
+        return -60;
+    }
+
+    return 20 * Math.log10(safePercent / 100);
+}
+
+// Match the audio level to the percentage shown when the page first loads.
+masterVolume.volume.value = volumePercentToDb(Number(volumeSlider.value));
+
+/* The slider displays a percentage but smoothly updates the actual audio level in dB. */
 volumeSlider.addEventListener("input", (event) => {
-    const value = Number(event.target.value);
-    masterVolume.volume.rampTo(value, 0.05);
-    volumeFeedback.textContent = `${value} dB`;
+    const percent = Number(event.target.value);
+    const decibels = volumePercentToDb(percent);
+
+    masterVolume.volume.rampTo(decibels, 0.05);
+    volumeFeedback.textContent = `${Math.round(percent)}%`;
 });
 
 /*
