@@ -126,8 +126,10 @@
                             <div class="rangeLabels" aria-hidden="true"><span>QUIET</span><span>LOUD</span></div>
                         </section>
 
-                        <fieldset class="controlCard waveformCard">
-                            <legend>Waveform</legend>
+                        <section class="controlCard waveformCard" role="group" aria-labelledby="waveform-title">
+                            <div class="controlCardHeader">
+                                <h3 id="waveform-title">Waveform</h3>
+                            </div>
                             <div class="waveformGrid">
                                 <label><input type="radio" class="waveformSelect" name="waveform" value="sine" checked><span>Sine</span></label>
                                 <label><input type="radio" class="waveformSelect" name="waveform" value="square"><span>Square</span></label>
@@ -135,7 +137,7 @@
                                 <label><input type="radio" class="waveformSelect" name="waveform" value="sawtooth"><span>Saw</span></label>
                             </div>
                             <output id="waveform-feedback" class="waveformFeedback">Sine</output>
-                        </fieldset>
+                        </section>
                     </div>
                 </div>
             </section>

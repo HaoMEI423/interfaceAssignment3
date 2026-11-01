@@ -621,17 +621,11 @@ input:focus-visible,
     letter-spacing: 0.08em;
 }
 
-/* The waveform choices stay in their own fieldset because they are one group of related sound-shape options. */
+/* Waveform uses the same card header as Volume. A regular heading avoids the fieldset legend cutting across the top border and keeps both titles aligned. */
 
 .waveformCard {
-    padding-top: 10px;
-}
-
-.waveformCard legend {
-    padding: 0;
-    color: var(--text);
-    font-size: 0.93rem;
-    font-weight: 700;
+    display: flex;
+    flex-direction: column;
 }
 
 /* A two-column grid keeps four waveform choices compact and easy to scan. */
