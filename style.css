@@ -1,5 +1,4 @@
-/* I keep the main colours, role accents and corner sizes here so the whole interface feels consistent. Amber marks the keyboard player; 
-mint marks the sound-control player. */
+/* I keep the main colours, role accents and corner sizes here so the whole interface feels consistent. Amber marks the keyboard player; mint marks the sound-control player. */
 
 :root {
     color-scheme: dark;
@@ -371,8 +370,7 @@ input:focus-visible,
     box-shadow: 0 0 0 3px rgba(127, 208, 189, 0.12);
 }
 
-/* This is the main movement area. The subtle gradients, crosshair and corner labels suggest a two-dimensional sound space; 
-touch-action keeps dragging smooth on touch devices. */
+/* This is the main movement area. The subtle gradients, crosshair and corner labels suggest a two-dimensional sound space; touch-action keeps dragging smooth on touch devices. */
 
 .spatialField {
     position: relative;
@@ -561,19 +559,22 @@ touch-action keeps dragging smooth on touch devices. */
     letter-spacing: 0;
 }
 
-/* Volume and waveform sit below the spatial pad as secondary controls. The grid keeps them compact and visually related to Player 01. */
+/* Volume and waveform sit below the spatial pad as secondary controls. Equal grid columns give both cards the same width, so neither control looks more important just because of its size. */
 
 .soundControlGrid {
     display: grid;
-    grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-items: stretch;
     gap: 12px;
     margin-top: auto;
 }
 
-/* The smaller cards group related settings and give them a clear boundary without competing with the spatial field. */
+/* Both controls use the same minimum height and shared card styling. This keeps the two sound-control boxes visually balanced on desktop and when they stack on narrower screens. */
 
 .controlCard {
+    width: 100%;
     min-width: 0;
+    min-height: 150px;
     margin: 0;
     border: 1px solid var(--line);
     border-radius: var(--radius-medium);
@@ -875,6 +876,7 @@ touch-action keeps dragging smooth on touch devices. */
     }
 
     .controlCard {
+        min-height: 150px;
         padding: 11px;
     }
 
@@ -917,7 +919,7 @@ touch-action keeps dragging smooth on touch devices. */
     }
 
     .soundControlGrid {
-        grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+        grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 
     .pageFooter {
@@ -1054,6 +1056,7 @@ touch-action keeps dragging smooth on touch devices. */
     }
 
     .controlCard {
+        min-height: 150px;
         padding: 12px;
     }
 
