@@ -23,13 +23,25 @@ const keyboardSynth = new Tone.PolySynth(Tone.Synth, {
 });
 
 /*
- * A pure sine wave has almost no overtones, so a resonant filter has very
- * little extra material to shape. This gentle exciter adds a small amount
- * of harmonics before the filter, making both spatial axes audible even
- * when Player 02 selects Sine. The amount stays low to avoid harshness.
+ * Sine chords became buzzy when distortion was applied to the whole polyphonic
+ * signal, because the non-linear waveshaper created extra intermodulation
+ * tones between notes. Instead, I create a separate, clean sine voice one
+ * octave above each played note. This adds a controlled second harmonic without
+ * distorting the original notes, so chords stay smoother.
  */
-const harmonicExciter = new Tone.Distortion(0.12);
-harmonicExciter.oversample = "2x";
+const harmonicSynth = new Tone.PolySynth(Tone.Synth, {
+    volume: -14,
+    oscillator: { type: "sine" },
+    envelope: {
+        attack: 0.015,
+        decay: 0.15,
+        sustain: 0.45,
+        release: 0.45
+    }
+});
+
+// Keep the selected waveform available to the keyboard controller.
+window.currentWaveform = "sine";
 
 /*
  * The main low-pass filter controls brightness on the horizontal axis.
@@ -41,13 +53,14 @@ const filter = new Tone.Filter(1400, "lowpass", -12);
 filter.Q.value = 0.707;
 
 /*
- * The previous low-pass Q change was too subtle to hear across the whole pad.
- * This band-pass filter creates a focused resonant layer around 550 Hz, close
- * to the C4-C5 keyboard range. Player 01 controls how much of this layer is
- * mixed into the shared sound with vertical movement.
+ * The previous resonance was too subtle, especially on notes away from 550 Hz.
+ * This band-pass layer now follows the notes being played and focuses on their
+ * second harmonic. A higher Q makes the resonant peak much more obvious, while
+ * the Y-axis controls how strongly this layer is mixed into the shared sound.
  */
-const resonanceFilter = new Tone.Filter(550, "bandpass");
-resonanceFilter.Q.value = 1.4;
+const resonanceFilter = new Tone.Filter(700, "bandpass");
+// Use a much stronger, narrower resonant peak for this testing pass.
+resonanceFilter.Q.value = 10;
 const resonanceGain = new Tone.Gain(0);
 
 /* The slider controls the master level. Both sound paths are mixed before the compressor and limiter so overlapping notes and resonance peaks are controlled together. */
@@ -61,14 +74,17 @@ const compressor = new Tone.Compressor({
 });
 const limiter = new Tone.Limiter(-2).toDestination();
 
-keyboardSynth.connect(harmonicExciter);
-
-// Main sound path: horizontal movement changes low-pass brightness.
-harmonicExciter.connect(filter);
+// Main sound path: keep the original notes clean and use the low-pass filter for brightness.
+keyboardSynth.connect(filter);
 filter.connect(masterVolume);
 
-// Parallel sound path: vertical movement adds or reduces a resonant midrange band.
-harmonicExciter.connect(resonanceFilter);
+// The original synth also feeds the resonance filter, so its natural harmonics can be shaped.
+keyboardSynth.connect(resonanceFilter);
+
+// For Sine, a separate octave-up sine voice supplies a clean second harmonic without distortion.
+harmonicSynth.connect(resonanceFilter);
+
+// Parallel sound path: vertical movement controls how much resonant sound joins the shared output.
 resonanceFilter.connect(resonanceGain);
 resonanceGain.connect(masterVolume);
 
@@ -133,13 +149,40 @@ function getFilterFrequency(x) {
 
 /*
  * Map up-and-down movement to the amount of the resonant band mixed into
- * the sound. The top adds more of this band and the bottom removes it.
- * A 0-0.35 gain range makes the change clearly audible without overwhelming
- * the keyboard notes.
+ * the sound. This is an intentionally aggressive test range: the top reaches
+ * full gain and the bottom removes the resonant layer completely.
  */
 function getResonance(y) {
-    return (1 - y) * 0.35;
+    return (1 - y) * 1.0;
 }
+
+/*
+ * Tune the resonant band to the notes currently held by Player 02. It follows
+ * the average pitch and targets the second harmonic, so the Y-axis can be heard
+ * across the whole keyboard instead of only near one fixed frequency.
+ */
+window.updateResonancePitch = function (notes) {
+    if (!Array.isArray(notes) || notes.length === 0) {
+        return;
+    }
+
+    const frequencies = notes
+        .map((note) => Tone.Frequency(note).toFrequency())
+        .filter((frequency) => Number.isFinite(frequency) && frequency > 0);
+
+    if (frequencies.length === 0) {
+        return;
+    }
+
+    // Average in log space so the result behaves naturally across musical pitch.
+    const averagePitch = Math.exp(
+        frequencies.reduce((total, frequency) => total + Math.log(frequency), 0) /
+        frequencies.length
+    );
+
+    const targetFrequency = clamp(averagePitch * 2, 400, 1400);
+    resonanceFilter.frequency.rampTo(targetFrequency, 0.07);
+};
 
 /* Turn the current coordinates into simple words, so users can understand the sound state without reading technical values first. */
 
@@ -286,13 +329,17 @@ volumeSlider.addEventListener("input", (event) => {
 
 /*
  * Keep waveform changes in one function so the selected oscillator shape
- * and the visible readout stay in sync. The sine setting gets a little
- * harmonic excitation because a pure sine has no overtones for the filter
- * to shape; the other waveforms already contain harmonics, so they stay dry.
+ * and the visible readout stay in sync. When Sine is selected, the keyboard
+ * controller adds clean octave-up voices for the resonance layer. Other
+ * waveforms already contain overtones, so they do not need those extra voices.
  */
 function setWaveform(type) {
     keyboardSynth.set({ oscillator: { type } });
-    harmonicExciter.distortion = type === "sine" ? 0.12 : 0;
+    window.currentWaveform = type;
+
+    // Only Sine needs the extra clean octave because the other waveforms already contain overtones.
+    window.setSineHarmonicsEnabled?.(type === "sine");
+
     waveformFeedback.textContent = type === "sawtooth"
         ? "Saw"
         : type.charAt(0).toUpperCase() + type.slice(1);

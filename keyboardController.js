@@ -19,6 +19,42 @@ const activeComputerKeys = new Map();
 const activePointerKeys = new Map();
 const heldSources = new Map();
 const activeNoteOwners = new Map();
+const activeHarmonicNotes = new Map();
+
+/*
+ * Add a clean octave-up sine only while Sine is selected. This gives the
+ * resonance layer some harmonic content without distorting a chord, which
+ * can create a rough or vibrating sound when several notes overlap.
+ */
+function startSineHarmonic(note) {
+    if (activeHarmonicNotes.has(note)) {
+        return;
+    }
+
+    const frequency = Tone.Frequency(note).toFrequency() * 2;
+    harmonicSynth.triggerAttack(frequency);
+    activeHarmonicNotes.set(note, frequency);
+}
+
+/* Release the matching octave voice when the original note is no longer held. */
+function stopSineHarmonic(note) {
+    const frequency = activeHarmonicNotes.get(note);
+    if (frequency === undefined) {
+        return;
+    }
+
+    harmonicSynth.triggerRelease(frequency);
+    activeHarmonicNotes.delete(note);
+}
+
+/* If the user changes waveform while holding notes, update the extra sine voices immediately. */
+window.setSineHarmonicsEnabled = function (enabled) {
+    if (enabled) {
+        activeNoteOwners.forEach((_owners, note) => startSineHarmonic(note));
+    } else {
+        [...activeHarmonicNotes.keys()].forEach(stopSineHarmonic);
+    }
+};
 
 /* Register the press before waiting for audio. The entry object also acts as a small ID, so an old async action cannot start a newer or already-released press. */
 function registerHeldSource(sourceId, mappedKey) {
@@ -47,11 +83,18 @@ async function playNote(sourceId, source) {
         keyboardSynth.triggerAttack(source.note);
         owners = new Set();
         activeNoteOwners.set(source.note, owners);
+
+        if (window.currentWaveform === "sine") {
+            startSineHarmonic(source.note);
+        }
     }
 
     owners.add(sourceId);
     source.playing = true;
     source.element.classList.add("activeKey");
+
+    // Let the spatial resonance follow the notes currently being played.
+    window.updateResonancePitch?.([...activeNoteOwners.keys()]);
 }
 
 /* Release one input source. If another source is still holding the same note, keep that note sounding until the last source is released. */
@@ -71,9 +114,13 @@ function releaseSource(sourceId) {
 
             if (owners.size === 0) {
                 keyboardSynth.triggerRelease(source.note);
+                stopSineHarmonic(source.note);
                 activeNoteOwners.delete(source.note);
             }
         }
+
+        // Retune the resonant layer when the set of held notes changes.
+        window.updateResonancePitch?.([...activeNoteOwners.keys()]);
     }
 
     /* Keep the key highlighted if another held input is still using this same on-screen key. */
@@ -89,9 +136,13 @@ function releaseSource(sourceId) {
 function releaseAllActiveNotes() {
     activeNoteOwners.forEach((_owners, note) => {
         keyboardSynth.triggerRelease(note);
+        stopSineHarmonic(note);
     });
 
+    // Clear any remaining harmonic voices as an extra safety net.
+    [...activeHarmonicNotes.keys()].forEach(stopSineHarmonic);
     activeNoteOwners.clear();
+    window.updateResonancePitch?.([]);
     heldSources.clear();
     activeComputerKeys.clear();
     activePointerKeys.clear();
